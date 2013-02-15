@@ -65,6 +65,7 @@
     var states = [ "Double", "Simple", "Triple", "Simple" ];
     var last = null;
     var lastColor = "";
+    var game = null;
 
     function getColor(position, state) {
         var index = position;
@@ -74,6 +75,9 @@
     }
 
     function hit(position, state) {
+      if(game && game.dartNumber <= document.getElementById('scoreList').children.length)
+          return false;
+
       var score = document.createElement('li');
       var text = "";
       var mult = 1;
@@ -106,6 +110,8 @@
       }
 
       document.getElementById('scoreList').appendChild(score);
+
+      return true;
     }
 
     function drawTarget(containerId, W, H, color1, color2) {
@@ -201,22 +207,27 @@
         stage.add(textLayer);
     }
 
+    function reset() {
+        document.getElementById('scoreList').innerHTML = "";
+        drawTarget('container', 600, 600, "lightgreen", "lightblue");
+    }
+
     window.onload = function() {
         drawTarget('container', 600, 600, "lightgreen", "lightblue");
         document.getElementById("reset").onclick = function() {
-            document.getElementById('scoreList').innerHTML = "";
-            drawTarget('container', 600, 600, "lightgreen", "lightblue");
+            reset();
             return false;
         };
 
-        var game = new DartGame.Five01();
+        game = new DartGame.Five01();
         game.addPlayer('Mau');
         game.addPlayer('Jul');
         game.start();
-        console.debug(game);
 
         document.getElementById('confirm').onclick = function() {
             game.score(document.getElementById('scoreList'));
+            reset();
+            return false;
         }
     }
     </script>
@@ -234,11 +245,10 @@
       </div>
       <div id="right">
           <div id="game">
-              <div id="type">Cut-throat cricket</div>
-              <div id="turns">#15</div>
+              <div id="type"></div>
+              <div id="turns"></div>
           </div>
           <div id="scoreboard">
-              Content of the scoreboard
           </div>
       </div>
   </body>
