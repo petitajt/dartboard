@@ -1,0 +1,234 @@
+<html>
+  <head>
+    <title>Test canvas</title>
+    <style type="text/css">
+    body {
+      background: #333;
+    }
+
+    .canvas {
+        position: relative;
+    }
+
+    #scoreList {
+      position: relative;
+      width: 7em;
+      list-style: none;
+    }
+
+    #scoreList li {
+      width: 100%;
+      background-color: #666;
+      color: #fff;
+      font-weight: bold;
+    }
+
+    a.reset {
+      color: #fff;
+      font-weight: bold;
+    }
+
+    div {
+        position: relative;
+        border: 1px solid green;
+    }
+
+    #left {
+        float: left;
+        height: 100%;
+        width: 700px;
+    }
+
+    #right {
+        float: left;
+        height: 100%;
+    }
+
+    #game {
+        width: 100%;
+    }
+
+    #game div {
+        float: left;
+    }
+    </style>
+
+    <script type="text/javascript" language="javascript" src="kinetic-v4.3.2.min.js"></script>
+    <script type="text/javascript" language="javascript" src="kinetic-arcedtext-extension.js"></script>
+    <script type="text/javascript" language="javascript" src="kinetic-darts-extension.js"></script>
+    <script type="text/javascript" language="javascript" src="canvas-helper.js"></script>
+
+    <script type="text/javascript" language="javascript">
+    var colors = [ "lightblue", "lightgreen" ];
+    var values = [ 0, 20, 1, 18, 4, 13, 6, 10, 15, 2, 17, 3, 19, 7, 16, 8, 11, 14, 9, 12, 5, 25 ];
+    var states = [ "Double", "Simple", "Triple", "Simple" ];
+    var last = null;
+    var lastColor = "";
+
+    function getColor(position, state) {
+        var index = position;
+        if(state == 1 || state == 3)
+            index++;
+        return colors[index%2];
+    }
+
+    function hit(position, state) {
+      var score = document.createElement('li');
+      var text = "";
+      var mult = 1;
+
+      if(state == 0)
+          mult = 2;
+      else if(state == 2)
+          mult = 3;
+
+      if(position == values.length - 1) {
+          if(state == 0)
+              text = "Bullseye";
+          else
+              text = "Center";
+      }
+      else if(position == 0) {
+        text = "Out";
+        mult = 0;
+      }
+      else {
+          text += states[state] + " " + values[position];
+      }
+
+      score.innerHTML = text;
+      score.setAttribute("value", values[position]);
+      score.setAttribute("multiplicator", mult);
+
+      score.onclick = function() {
+        document.getElementById('scoreList').removeChild(this);
+      }
+
+      document.getElementById('scoreList').appendChild(score);
+    }
+
+    function drawTarget(containerId, W, H, color1, color2) {
+        document.getElementById('container').innerHTML = "";
+        var stage = new Kinetic.Stage({
+            container: containerId,
+            width: W,
+            height: H
+        });
+
+        var layer = new Kinetic.Layer();
+        for(var i = 1; i < 21; i++) {
+            for(var j = 0; j < 4; j++) {
+                layer.add(new Kinetic.DartSlice({ 
+                    position: i,
+                    state: j,
+                    fill: getColor(i, j),
+                    stroke: 'black',
+                    strokeWidth: 2
+                }));
+            }
+        }
+
+        layer.add(new Kinetic.DartRing({ 
+            position: values.length - 1,
+            state: 1,
+            fill: getColor(values.length - 1, 1),
+            stroke: 'black',
+            strokeWidth: 2
+        }));
+
+        layer.add(new Kinetic.DartRing({ 
+            position:  values.length - 1,
+            state: 0,
+            fill: getColor(values.length - 1, 0),
+            stroke: 'black',
+            strokeWidth: 2
+        }));
+
+        layer.on('click', function(evt) {
+            var shape = evt.shape;
+            hit(shape.getPosition(), shape.getState());
+            if(last != null) {
+                last.setFill(lastColor);
+            }
+            lastColor = shape.getFill();
+            last = shape;
+            shape.setFill('red');
+            this.draw();
+        });
+
+        var textLayer = new Kinetic.Layer();
+        var angle_rad = 2 * Math.PI / 20;
+
+        for(var i = 0; i < 20; i++) {
+            var startAngle = normalizeAngle(Math.PI*(1.5) + angle_rad * (i - 1/2));
+            var endAngle = normalizeAngle(startAngle + angle_rad);
+            textLayer.add(new Kinetic.ArcedText({
+                x: stage.getWidth()/4,
+                y: stage.getHeight()/4,
+                start: startAngle,
+                end: endAngle,
+                padLeft: angle_rad / 4,
+                padRight: angle_rad / 4,
+                text: new String(values[i+1]),
+                fontSize: 25,
+                fontFamily: 'Arial',
+                fill: 'black',
+                strokeWidth: 0,
+                radius: stage.getHeight()/2 - 20,
+            }));
+        }
+
+
+        var background = new Kinetic.Rect({
+            x: 0,
+            y: 0,
+            width: W,
+            height: H,
+            fill: 'transparent',
+            stroke: 'transparent',
+            strokeWidth: 0,
+        });
+
+        background.on('click', function(evt) {
+            hit(0, '');
+        });
+
+        var bgLayer = new Kinetic.Layer();
+        bgLayer.add(background);
+        stage.add(bgLayer);
+        stage.add(layer);
+        stage.add(textLayer);
+    }
+
+    window.onload = function() {
+        drawTarget('container', 600, 600, "lightgreen", "lightblue");
+        document.getElementById("reset").onclick = function() {
+            document.getElementById('scoreList').innerHTML = "";
+            drawTarget('container', 600, 600, "lightgreen", "lightblue");
+            return false;
+        };
+    }
+    </script>
+  </head>
+  <body>
+      <div id="left">
+          <!-- <canvas class="canvas" id="canvas" width="600" height="600"></canvas>-->
+          <div id="container"></div>
+          <div id="score">
+              <ul id="scoreList">
+              </ul>
+              <a href="#" id="reset" class="cancel">Reset</a>
+              <a href="#" id="confirm" class="validate">Confirm</a>
+          </div>
+      </div>
+      <div id="right">
+          <div id="game">
+              <div id="type">Cut-throat cricket</div>
+              <div id="turns">#15</div>
+          </div>
+          <div id="scoreboard">
+              Content of the scoreboard
+          </div>
+      </div>
+  </body>
+</html>
