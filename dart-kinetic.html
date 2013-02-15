@@ -57,6 +57,7 @@
     <script type="text/javascript" language="javascript" src="kinetic-arcedtext-extension.js"></script>
     <script type="text/javascript" language="javascript" src="kinetic-darts-extension.js"></script>
     <script type="text/javascript" language="javascript" src="canvas-helper.js"></script>
+    <script type="text/javascript" language="javascript" src="dartgame.js"></script>
 
     <script type="text/javascript" language="javascript">
     var colors = [ "lightblue", "lightgreen" ];
@@ -207,6 +208,16 @@
             drawTarget('container', 600, 600, "lightgreen", "lightblue");
             return false;
         };
+
+        var game = new DartGame.Five01();
+        game.addPlayer('Mau');
+        game.addPlayer('Jul');
+        game.start();
+        console.debug(game);
+
+        document.getElementById('confirm').onclick = function() {
+            game.score(document.getElementById('scoreList'));
+        }
     }
     </script>
   </head>
