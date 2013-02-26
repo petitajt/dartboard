@@ -30,7 +30,9 @@ var DartGame = {};
             this.next();
         },
         next: function() {
+            var last = this.currentPlayer;
             this.currentPlayer = ++this.currentPlayer % this.players.length;
+            this._highlightPlayer(last);
             if(this.currentPlayer == 0)
                 this._newTurn();
         },
@@ -96,24 +98,39 @@ var DartGame = {};
             DartGame.Base.call(this, config);
         },
         _setGrid: function(score) {
-            this.currentRow.insertCell(-1).innerHTML = score.turn;
-            this.currentRow.insertCell(-1).innerHTML = score.total;
+            this.currentRow.cells[this.currentPlayer * 2].innerHTML = score.turn;
+            if(score.ok == true)
+                this.currentRow.cells[this.currentPlayer * 2 + 1].innerHTML = score.total;
+            else
+                this.currentRow.cells[this.currentPlayer * 2 + 1].innerHTML = "&mdash;";
+
+            if(score.total == 0) {
+                this.currentRow.cells[this.currentPlayer * 2].className = "win";
+                this.currentRow.cells[this.currentPlayer * 2 + 1].className = "win";
+            }
+
         },
         _initGrid: function() {
             this.grid = document.createElement("table");
+            this.grid.className = "X01";
+
 
             this.header = this.grid.insertRow(-1);
-            this.currentRow = this.grid.insertRow(-1);
+            this.header.className = "header";
+            this._newRow();
 
             for(var player in this.players) {
                 var playerCell = this.header.insertCell(-1);
                 playerCell.innerHTML = this.players[player];
                 playerCell.colSpan = 2;
 
-                this._setGrid({ turn: '-', total: this.maxScore, });
+                this.currentPlayer = player;
+                this._setGrid({ turn: "&mdash;", total: this.maxScore, ok: true, });
             }
+            this.currentPlayer = 0;
 
             this._newTurn();
+            this._highlightPlayer(0);
         },
         _convertScore: function(score) {
             var result = {};
@@ -127,15 +144,32 @@ var DartGame = {};
                 result.turn += score[i].value * score[i].multiplicator;
             }
 
-            if(result.total >= result.turn)
+            if(result.total >= result.turn) {
                 result.total -= result.turn;
+                result.ok = true;
+            }
+            else
+                result.ok = false;
+
 
             return result;
         },
+        _newRow: function() {
+            this.currentRow = this.grid.insertRow(-1);
+            for(var i = 0; i < this.players.length; i++) {
+                this.currentRow.insertCell(-1);
+                this.currentRow.insertCell(-1);
+            }
+        },
         _newTurn: function() {
             this.currentTurn++;
-            document.getElementById(this.turnsContainerId).innerHTML = this.currentTurn + '/'  + this.maxTurns;            this.currentRow = this.grid.insertRow(-1);
+            document.getElementById(this.turnsContainerId).innerHTML = this.currentTurn + '/'  + this.maxTurns;
+            this._newRow();
             return this.currentTurn > this.maxTurns;
+        },
+        _highlightPlayer: function(lastPlayer) {
+            this.header.cells[lastPlayer].className = "";
+            this.header.cells[this.currentPlayer].className = "current";
         },
     };
     Kinetic.Global.extend(DartGame.X01, DartGame.Base);
@@ -145,7 +179,7 @@ var DartGame = {};
     };
     DartGame.Five01.prototype = {
         _init501: function() {
-            DartGame.X01.call(this, { gameName: 'Five-O-One', maxTurns: '-', maxScore: 501 });
+            DartGame.X01.call(this, { gameName: 'Five-O-One', maxTurns: '&infin;', maxScore: 501 });
         },
     };
     Kinetic.Global.extend(DartGame.Five01, DartGame.X01);
