@@ -183,4 +183,24 @@ var DartGame = {};
         },
     };
     Kinetic.Global.extend(DartGame.Five01, DartGame.X01);
+
+    DartGame.Four01= function() {
+        this._init401();
+    };
+    DartGame.Four01.prototype = {
+        _init401: function() {
+            DartGame.X01.call(this, { gameName: 'Four-O-One', maxTurns: '&infin;', maxScore: 401 });
+        },
+    };
+    Kinetic.Global.extend(DartGame.Four01, DartGame.X01);
+
+    DartGame.Three01= function() {
+        this._init301();
+    };
+    DartGame.Three01.prototype = {
+        _init301: function() {
+            DartGame.X01.call(this, { gameName: 'Three-O-One', maxTurns: '&infin;', maxScore: 301 });
+        },
+    };
+    Kinetic.Global.extend(DartGame.Three01, DartGame.X01);
 })()
