@@ -263,7 +263,7 @@
                 text: new String(values[i+1]),
                 fontSize: 25,
                 fontFamily: 'Arial',
-                fill: 'black',
+                fill: '#8a8a8a',
                 strokeWidth: 0,
                 radius: stage.getHeight()/2 - 20,
             }));
@@ -303,7 +303,8 @@
             return false;
         };
 
-        game = new DartGame.Three01();
+        //game = new DartGame.Three01();
+        game = new DartGame.Cricket();
         game.addPlayer('Mau');
         game.addPlayer('Jul');
         game.start();

@@ -203,4 +203,94 @@ var DartGame = {};
         },
     };
     Kinetic.Global.extend(DartGame.Three01, DartGame.X01);
+
+    DartGame.Cricket = function(config) {
+        this._initCricket(config);
+    };
+    DartGame.Cricket.prototype = {
+        spots: { '15': '15', '16': '16', '17': '17', '18': '18', '19': '19', '20': '20', 'D': 'double', 'T': 'triple', '25': 'center' },
+        header: null,
+        currentRow: null,
+        _initCricket: function(config) {
+            if(config && config.maxScore)
+                this.maxScore = config.maxScore;
+            DartGame.Base.call(this, config);
+        },
+        _setGrid: function(score) {
+            var i = 0;
+            console.debug(score);
+            for(var spot in this.spots) {
+                if(score[this.spots[spot]]) {
+                    var nbCheck = score[this.spots[spot]];
+                    console.debug(nbCheck);
+                    if(nbCheck > 3)
+                        nbCheck = 3;
+                    for(var j = 1; j <= nbCheck; j++)
+                        this.grid.rows[i + 1].cells[this.currentPlayer * 3 + j].innerHTML = "&times;";
+                }
+                i++;
+            }
+        },
+        _initGrid: function() {
+            this.grid = document.createElement("table");
+            this.grid.className = "Cricket";
+
+
+            this.header = this.grid.insertRow(-1);
+            this.header.className = "header";
+
+            var baseCell = this.header.insertCell(-1);
+            baseCell.innerHTML = "&times;";
+            baseCell.className = "base";
+
+            for(var player in this.players) {
+                var playerCell = this.header.insertCell(-1);
+                playerCell.innerHTML = this.players[player];
+                playerCell.colSpan = 3;
+            }
+
+            for(var spot in this.spots) {
+                this._newRow(this.spots[spot]);
+            }
+
+            this._newTurn();
+            this._highlightPlayer(0);
+        },
+        _convertScore: function(score) {
+            var result = {};
+
+            for(var i in score) {
+                if(this.spots[score[i].value]) {
+                    if(!result[score[i].value])
+                        result[score[i].value] = Number(0);
+                    result[score[i].value] += Number(score[i].multiplicator);
+                }
+            }
+
+            return result;
+        },
+        _newRow: function(value) {
+            this.currentRow = this.grid.insertRow(-1);
+            var cell = this.currentRow.insertCell(-1);
+            cell.innerHTML = value;
+            cell.className = "base";
+
+            for(var i = 0; i < this.players.length; i++) {
+                this.currentRow.insertCell(-1).className = "empty";
+                this.currentRow.insertCell(-1).className = "empty";
+                this.currentRow.insertCell(-1).className = "empty";
+            }
+        },
+        _newTurn: function() {
+            this.currentTurn++;
+            document.getElementById(this.turnsContainerId).innerHTML = this.currentTurn + '/'  + this.maxTurns;
+            return this.currentTurn > this.maxTurns;
+        },
+        _highlightPlayer: function(lastPlayer) {
+            this.header.cells[lastPlayer].className = "";
+            this.header.cells[this.currentPlayer].className = "current";
+        },
+    };
+    Kinetic.Global.extend(DartGame.Cricket, DartGame.Base);
+
 })()
