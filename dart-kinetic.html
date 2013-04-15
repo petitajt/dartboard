@@ -3,138 +3,8 @@
     <meta charset="utf-8">
     <title>Test canvas</title>
     <link rel="stylesheet" type="text/css" href="reset.css"></link>
+    <link rel="stylesheet" type="text/css" href="main.css"></link>
     <style type="text/css">
-    body {
-      background: #333;
-      color: #8a8a8a;
-    }
-
-    .canvas {
-        position: relative;
-    }
-
-    div#container {
-        width: 600px;
-        margin: 1em auto;
-    }
-
-    div#score {
-      width: 20em;
-      margin: 0px auto;
-    }
-
-    #scoreList {
-      position: relative;
-      height: 6.5em;
-      list-style: none;
-    }
-
-    #scoreList li {
-      background-color: #666;
-      color: #fff;
-      font-weight: bold;
-      border: 1px solid #aaa;
-      border-radius: 3px;
-      padding: 6px 0px;
-      margin: 0 0 3px 0;
-      text-indent: 2em;
-      cursor: crosshair;
-    }
-
-    a.button {
-        border: 0;
-        border-right: 8px solid black;
-        padding: 9px 10px 4px 20px;
-        text-align: right;
-        font-weight: bold;
-        color: #383838;
-        display: block;
-        font-variant: small-caps;
-    }
-
-    a.validate {
-        background-color: #f0ffe1;
-        border-color: #5ba622;
-        width: 50%;
-        float: left;
-    }
-
-    a.cancel {
-        background-color: #e7e7e7;
-        border-color: #8a8a8a;
-        float: right;
-    }
-
-    div {
-        position: relative;
-        border: none;
-    }
-
-    #left {
-        float: left;
-        height: 100%;
-        width: 50%;
-    }
-
-    #right {
-        position: relative;
-        float: left;
-        height: 100%;
-        width: 50%;
-    }
-
-    #game {
-        position: relative;
-        width: 80%;
-        margin: 1em auto;
-        height: 1em;
-        border: 0;
-        border-bottom: 1px solid #8a8a8a;
-        padding: 0.5em 4px 2px 4px;
-    }
-
-    #type {
-        width: 50%;
-        float: left;
-    }
-
-    #turns {
-        float: right;
-        text-align: right;
-        width: 50%;
-    }
-
-    table.X01 {
-        border-collapse: collapse;
-        width: 95%;
-        margin: 0px auto;
-        empty-cells: show;
-        table-layout: fixed;
-    }
-
-    table.X01 td, table.X01 th {
-        border: 1px solid #8a8a8a;
-        text-align: center;
-        vertical-align: middle;
-    }
-
-    table tr {
-        height: 1.5em;
-    }
-
-    table.X01 tr.header td {
-        background-color: #8a8a8a;
-        color: #333;
-        font-weight: bold;
-    }
-
-    table.X01 tr td.win {
-        color: red;
-    }
-
-    table.X01 tr.header td.current {
-        color: #f90;
-    }
     </style>
 
     <script type="text/javascript" language="javascript" src="kinetic-v4.3.2.min.js"></script>
@@ -317,22 +187,35 @@
     </script>
   </head>
   <body>
-      <div id="left">
-          <div id="container"></div>
-          <div id="score">
-              <ul id="scoreList">
-              </ul>
-              <a href="#" id="confirm" class="validate button">Confirm</a>
-              <a href="#" id="reset" class="cancel button">Reset</a>
-          </div>
+      <div id="header" class="visible">
+        <form id="config">
+          <fieldset id="players-conf" name="pconf">
+            <legend>Players</legend>
+          </fieldset>
+          <fieldset id="game-conf">
+            <legend>Game</legend>
+          </fieldset>
+        </form>
+        <div id="conf-button" class="hide" />
       </div>
-      <div id="right">
-          <div id="game">
-              <div id="type"></div>
-              <div id="turns"></div>
-          </div>
-          <div id="scoreboard">
-          </div>
+      <div id="main">
+        <div id="left">
+            <div id="container"></div>
+            <div id="score">
+                <ul id="scoreList">
+                </ul>
+                <a href="#" id="confirm" class="validate button">Confirm</a>
+                <a href="#" id="reset" class="cancel button">Reset</a>
+            </div>
+        </div>
+        <div id="right">
+            <div id="game">
+                <div id="type"></div>
+                <div id="turns"></div>
+            </div>
+            <div id="scoreboard">
+            </div>
+        </div>
       </div>
   </body>
 </html>
