@@ -98,6 +98,7 @@ div {
 
 #main {
   clear: both;
+  position: relative;
 }
 
 #header {
@@ -121,6 +122,10 @@ div {
   float: right;
   width: 45%;
   margin-right: 3%;
+}
+
+#config.hidden {
+    display: none;
 }
 
 #conf-button {
@@ -147,7 +152,7 @@ table.X01 td, table.X01 th {
     vertical-align: middle;
 }
 
-table tr {
+table.X01 tr {
     height: 1.5em;
 }
 
@@ -165,3 +170,22 @@ table.X01 tr.header td.current {
     color: #f90;
 }
 
+table.cricket {
+    border-collapse: collapse;
+    width: 95%;
+    margin: 0px auto;
+    empty-cells: show;
+    table-layout: fixed;
+}
+
+table.cricket tr.header td {
+    background-color: #8a8a8a;
+    color: #333;
+    font-weight: bold;
+}
+
+table.cricket td, table.cricket th {
+    border: 1px solid #8a8a8a;
+    text-align: center;
+    vertical-align: middle;
+}

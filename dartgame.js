@@ -217,23 +217,22 @@ var DartGame = {};
             DartGame.Base.call(this, config);
         },
         _setGrid: function(score) {
-            var i = 0;
             console.debug(score);
+            var i = 0;
             for(var spot in this.spots) {
                 if(score[this.spots[spot]]) {
                     var nbCheck = score[this.spots[spot]];
-                    console.debug(nbCheck);
-                    if(nbCheck > 3)
-                        nbCheck = 3;
-                    for(var j = 1; j <= nbCheck; j++)
-                        this.grid.rows[i + 1].cells[this.currentPlayer * 3 + j].innerHTML = "&times;";
+                    //if(nbCheck > 3)
+                    //    nbCheck = 3;
+                    //for(var j = 1; j <= nbCheck; j++)
+                    //    this.grid.rows[i + 1].cells[this.currentPlayer * 3 + j].innerHTML = "&times;";
                 }
                 i++;
             }
         },
         _initGrid: function() {
             this.grid = document.createElement("table");
-            this.grid.className = "Cricket";
+            this.grid.className = "cricket";
 
 
             this.header = this.grid.insertRow(-1);
@@ -273,12 +272,12 @@ var DartGame = {};
             this.currentRow = this.grid.insertRow(-1);
             var cell = this.currentRow.insertCell(-1);
             cell.innerHTML = value;
-            cell.className = "base";
+            cell.className = "base " + value;
 
             for(var i = 0; i < this.players.length; i++) {
-                this.currentRow.insertCell(-1).className = "empty";
-                this.currentRow.insertCell(-1).className = "empty";
-                this.currentRow.insertCell(-1).className = "empty";
+                this.currentRow.insertCell(-1).className = "empty " + value + " p" + i;
+                this.currentRow.insertCell(-1).className = "empty " + value + " p" + i;
+                this.currentRow.insertCell(-1).className = "empty " + value + " p" + i;
             }
         },
         _newTurn: function() {
