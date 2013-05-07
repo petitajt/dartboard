@@ -213,6 +213,20 @@ var DartGame = {};
         currentRow: null,
         totalRow: null,
         playerTotals: Array(),
+        onHit: function(position, state) {
+            var isScore = this.spots[String(position)];
+            if(state == 0 && this.spots['D']) {
+                if(!isScore || confirm("Count this as double?"))
+                    return { 'value': 'D', 'multiplicator': position};
+                else return null;
+            }
+            else if(state == 2 && this.spots['T']) {
+                if(!isScore || confirm("Count this as triple?"))
+                    return { 'value': 'T', 'multiplicator': position};
+                else return null;
+            }
+            return null;
+        },
         _initCricket: function(config) {
             this.maxTurns = 20;
             if(config) {
@@ -228,20 +242,32 @@ var DartGame = {};
             for(var spot in this.spots) {
                 if(score[spot]) {
                     var nbHits = score[spot];
+                    if(spot == 'D' || spot == 'T')
+                        nbHits = score[spot].length;
                     var selector = "td:empty.v" + this.spots[spot] + ".p" + this.currentPlayer;
                     var cell = $(selector).first();
                     while(cell.length > 0 && nbHits > 0) {
                         cell.append("&times;");
                         cell = cell.next(selector);
                         nbHits--;
+                        if(spot == 'D' || spot == 'T')
+                            score[spot].shift();
                     }
-                    this._addTotal(nbHits, spot);
+                    if(spot == 'D' || spot == 'T') {
+                        for(var val in score[spot]) {
+                            if(spot == 'D')
+                                this._addTotal(2, score[spot][val]);
+                            else
+                                this._addTotal(3, score[spot][val]);
+                        }
+                    }
+                    else
+                        this._addTotal(nbHits, spot);
                 }
                 i++;
             }
         },
         _addTotal: function(hits, value) {
-            console.debug(this.playerTotals, this.playerTotals[this.currentPlayer], hits, value);
             this.playerTotals[this.currentPlayer] += hits*value;
             $("tr.totals td.p" + this.currentPlayer).text(this.playerTotals[this.currentPlayer]);
         },
@@ -290,9 +316,16 @@ var DartGame = {};
 
             for(var i in score) {
                 if(this.spots[score[i].value]) {
-                    if(!result[score[i].value])
-                        result[score[i].value] = Number(0);
-                    result[score[i].value] += Number(score[i].multiplicator);
+                    if(score[i].value != 'D' && score[i].value != 'T') {
+                        if(!result[score[i].value])
+                            result[score[i].value] = Number(0);
+                        result[score[i].value] += Number(score[i].multiplicator);
+                    }
+                    else {
+                        if(!result[score[i].value])
+                            result[score[i].value] = Array();
+                        result[score[i].value].push(Number(score[i].multiplicator));
+                    }
                 }
             }
 
@@ -317,7 +350,7 @@ var DartGame = {};
         },
         _highlightPlayer: function(lastPlayer) {
             this.header.cells[lastPlayer].className = "";
-            this.header.cells[this.currentPlayer].className = "current";
+            this.header.cells[this.currentPlayer + 1].className = "current";
         },
     };
     Kinetic.Global.extend(DartGame.Cricket, DartGame.Base);

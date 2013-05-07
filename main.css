@@ -190,6 +190,10 @@ table.cricket td, table.cricket th {
     vertical-align: middle;
 }
 
+table.cricket tr.header td.current {
+    color: #f90;
+}
+
 table.cricket tr.totals td {
     border-top: 5px solid #8a8a8a;
 }

@@ -32,6 +32,9 @@
     function hit(position, state) {
       if(game && game.dartNumber <= document.getElementById('scoreList').children.length)
           return false;
+      var oh = null;
+      if(game && game.onHit)
+          oh = game.onHit(values[position], state);
 
       var score = document.createElement('li');
       var text = "";
@@ -57,8 +60,14 @@
       }
 
       score.innerHTML = text;
-      score.setAttribute("value", values[position]);
-      score.setAttribute("multiplicator", mult);
+      if(oh == null) {
+          score.setAttribute("value", values[position]);
+          score.setAttribute("multiplicator", mult);
+      }
+      else {
+          score.setAttribute("value", oh.value);
+          score.setAttribute("multiplicator", oh.multiplicator);
+      }
 
       score.onclick = function() {
         document.getElementById('scoreList').removeChild(this);
