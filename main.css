@@ -189,3 +189,7 @@ table.cricket td, table.cricket th {
     text-align: center;
     vertical-align: middle;
 }
+
+table.cricket tr.totals td {
+    border-top: 5px solid #8a8a8a;
+}

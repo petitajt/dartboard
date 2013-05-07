@@ -211,24 +211,39 @@ var DartGame = {};
         spots: { '15': '15', '16': '16', '17': '17', '18': '18', '19': '19', '20': '20', 'D': 'double', 'T': 'triple', '25': 'center' },
         header: null,
         currentRow: null,
+        totalRow: null,
+        playerTotals: Array(),
         _initCricket: function(config) {
-            if(config && config.maxScore)
-                this.maxScore = config.maxScore;
+            this.maxTurns = 20;
+            if(config) {
+                if(config.maxScore)
+                    this.maxScore = config.maxScore;
+                if(config.maxTurns)
+                    this.maxTurns = config.maxTurns;
+            }
             DartGame.Base.call(this, config);
         },
         _setGrid: function(score) {
-            console.debug(score);
             var i = 0;
             for(var spot in this.spots) {
-                if(score[this.spots[spot]]) {
-                    var nbCheck = score[this.spots[spot]];
-                    //if(nbCheck > 3)
-                    //    nbCheck = 3;
-                    //for(var j = 1; j <= nbCheck; j++)
-                    //    this.grid.rows[i + 1].cells[this.currentPlayer * 3 + j].innerHTML = "&times;";
+                if(score[spot]) {
+                    var nbHits = score[spot];
+                    var selector = "td:empty.v" + this.spots[spot] + ".p" + this.currentPlayer;
+                    var cell = $(selector).first();
+                    while(cell.length > 0 && nbHits > 0) {
+                        cell.append("&times;");
+                        cell = cell.next(selector);
+                        nbHits--;
+                    }
+                    this._addTotal(nbHits, spot);
                 }
                 i++;
             }
+        },
+        _addTotal: function(hits, value) {
+            console.debug(this.playerTotals, this.playerTotals[this.currentPlayer], hits, value);
+            this.playerTotals[this.currentPlayer] += hits*value;
+            $("tr.totals td.p" + this.currentPlayer).text(this.playerTotals[this.currentPlayer]);
         },
         _initGrid: function() {
             this.grid = document.createElement("table");
@@ -250,6 +265,21 @@ var DartGame = {};
 
             for(var spot in this.spots) {
                 this._newRow(this.spots[spot]);
+            }
+
+            this.totalRow = this.grid.insertRow(-1);
+            this.totalRow.className = "totals";
+            var cell = this.totalRow.insertCell(-1);
+            cell.innerHTML = "Scores";
+            cell.className = "base";
+
+            this.playerTotals = Array();
+            for(var i = 0; i < this.players.length; i++) {
+                cell = this.totalRow.insertCell(-1);
+                cell.colSpan = 3;
+                cell.innerHTML = '0';
+                cell.className = 'p'+i;
+                this.playerTotals.push(0);
             }
 
             this._newTurn();
@@ -275,9 +305,9 @@ var DartGame = {};
             cell.className = "base " + value;
 
             for(var i = 0; i < this.players.length; i++) {
-                this.currentRow.insertCell(-1).className = "empty " + value + " p" + i;
-                this.currentRow.insertCell(-1).className = "empty " + value + " p" + i;
-                this.currentRow.insertCell(-1).className = "empty " + value + " p" + i;
+                this.currentRow.insertCell(-1).className = "v" + value + " p" + i;
+                this.currentRow.insertCell(-1).className = "v" + value + " p" + i;
+                this.currentRow.insertCell(-1).className = "v" + value + " p" + i;
             }
         },
         _newTurn: function() {
