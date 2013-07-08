@@ -104,12 +104,10 @@ div {
 #header {
   width: 100%;
   background-color: #111;
-  height: 420px;
 }
 
 #header fieldset {
   border: 1px solid #8a8a8a;
-  height: 380px;
 }
 
 #players-conf {
@@ -124,18 +122,24 @@ div {
   margin-right: 3%;
 }
 
+#config fieldset {
+    margin-bottom: 5px;
+}
+
 #config.hidden {
     display: none;
 }
 
+#marker {
+    clear: both;
+}
+
 #conf-button {
-  clear: both;
   height: 20px;
   width: 90%;
-  border-top: 1px solid #8a8a8a;
-  position: absolute;
-  bottom: 0px;
-  left: 5%;
+  border-bottom: 1px solid #8a8a8a;
+  margin: 0px auto;
+  text-align: center;
 }
 
 table.X01 {

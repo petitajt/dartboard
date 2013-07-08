@@ -23,7 +23,19 @@ var DartGame = {};
             }
         },
         addPlayer: function(name) {
-            return this.players.push(name) - 1;
+            if(this.players.indexOf(name) == -1)
+                return this.players.push(name) - 1;
+            else
+                return -1;
+        },
+        removePlayer: function(name) {
+            var index = this.players.indexOf(name);
+            if(this.players.length > 1 && index != -1) {
+                this.players.splice(index, 1);
+                return 1;
+            }
+            else
+                return -1;
         },
         score: function(score) {
             this._setScore(this._convertScore(this._getScore(score)));
@@ -228,17 +240,16 @@ var DartGame = {};
             return null;
         },
         _initCricket: function(config) {
-            this.maxTurns = 20;
-            if(config) {
-                if(config.maxScore)
-                    this.maxScore = config.maxScore;
-                if(config.maxTurns)
-                    this.maxTurns = config.maxTurns;
+            if(!config) {
+                config = {
+                    gameName: 'Cricket',
+                    maxTurns: 20
+                }
             }
+            
             DartGame.Base.call(this, config);
         },
         _setGrid: function(score) {
-            var i = 0;
             for(var spot in this.spots) {
                 if(score[spot]) {
                     var nbHits = score[spot];
@@ -264,7 +275,7 @@ var DartGame = {};
                     else
                         this._addTotal(nbHits, spot);
                 }
-                i++;
+                //i++;
             }
         },
         _addTotal: function(hits, value) {
@@ -308,6 +319,8 @@ var DartGame = {};
                 this.playerTotals.push(0);
             }
 
+            this.currentTurn = 0;
+            this.currentPlayer = 0;
             this._newTurn();
             this._highlightPlayer(0);
         },
@@ -349,7 +362,7 @@ var DartGame = {};
             return this.currentTurn > this.maxTurns;
         },
         _highlightPlayer: function(lastPlayer) {
-            this.header.cells[lastPlayer].className = "";
+            this.header.cells[lastPlayer + 1].className = "";
             this.header.cells[this.currentPlayer + 1].className = "current";
         },
     };

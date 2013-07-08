@@ -176,6 +176,15 @@
         drawTarget('container', 600, 600, "lightgreen", "lightblue");
     }
 
+    function setPlayersList() {
+      $('#removePlayer').empty();
+      for(var player in game.players) {
+        $('#removePlayer')
+          .append("<li name='" + game.players[player] + "' value='" + game.players[player] + "'>" + game.players[player] + "</li>");
+
+      }
+    }
+
     window.onload = function() {
         drawTarget('container', 600, 600, "lightgreen", "lightblue");
         document.getElementById("reset").onclick = function() {
@@ -194,23 +203,82 @@
             reset();
             return false;
         }
+
+        $('#conf-button').click(function() {
+          $('#config').toggleClass('hidden');
+          if($('#config').hasClass('hidden'))
+            $('#conf-button').text('View config');
+          else
+            $('#conf-button').text('Hide config');
+        });
+
+        $('input[name="game-name"]').click(function() {
+          switch($(this).val()) {
+            case '501':
+              game = new DartGame.Five01();
+              break;
+            case '401':
+              game = new DartGame.Four01();
+              break;
+            case '301':
+              game = new DartGame.Three01();
+              break;
+            case 'cricket':
+            default:
+              game = new DartGame.Cricket();
+              break;
+          }
+          game.start();
+        });
+
+        setPlayersList();
+
+        $('input[name="add-player"]').click(function() {
+          if(game.addPlayer($('input[name="new-player"]').val()) >= 0) {
+            setPlayersList();
+            game.start();
+          }
+          return false;
+        });
+
+        $('#removePlayer').on('dblclick', 'li', function() {
+          if(game.removePlayer($(this).text()) >= 0) {
+            setPlayersList();
+            game.start();
+          }
+          return false;
+        });
     }
     </script>
   </head>
   <body>
-    <!--
-      <div id="header" class="visible">
-        <form id="config" class="hidden">
-          <fieldset id="players-conf" name="pconf">
-            <legend>Players</legend>
-          </fieldset>
-          <fieldset id="game-conf">
-            <legend>Game</legend>
-          </fieldset>
-        </form>
-        <div id="conf-button" class="hide" />
+      <div id="header">
+        <div>
+          <div id="conf-button" class="hide">View config</div>
+          <div id="config" class="hidden">
+            <form name="players-conf" id="players-conf">
+              <fieldset name="pconf">
+                <legend>Players</legend>
+                <label>Add player<input type="text" name="new-player"></input></label>
+                <input type="button" name="add-player" value="Add Player"/>
+                <ul id="removePlayer">
+                </ul>
+              </fieldset>
+            </form>
+            <form name="game-conf" id="game-conf">
+              <fieldset name="gconf">
+                <legend>Game</legend>
+                <label><input type="radio" name="game-name" value="cricket" checked="yes"/>Cricket</label>
+                <label><input type="radio" name="game-name" value="501"/>501</label>
+                <label><input type="radio" name="game-name" value="401"/>401</label>
+                <label><input type="radio" name="game-name" value="301"/>301</label>
+              </fieldset>
+            </form>
+          </div>
+          <div id="marker"></div>
+        </div>
       </div>
- -->
+
       <div id="main">
         <div id="left">
             <div id="container"></div>
