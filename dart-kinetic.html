@@ -8,6 +8,7 @@
     </style>
 
     <script type="text/javascript" language="javascript" src="jquery-2.0.0.js"></script>
+    <script type="text/javascript" language="javascript" src="jquery.sortable.js"></script>
     <script type="text/javascript" language="javascript" src="kinetic-v4.3.2.min.js"></script>
     <script type="text/javascript" language="javascript" src="kinetic-arcedtext-extension.js"></script>
     <script type="text/javascript" language="javascript" src="kinetic-darts-extension.js"></script>
@@ -180,9 +181,18 @@
       $('#removePlayer').empty();
       for(var player in game.players) {
         $('#removePlayer')
-          .append("<li name='" + game.players[player] + "' value='" + game.players[player] + "'>" + game.players[player] + "</li>");
+          .append("<li name='" + game.players[player] + "' class='button cancel' value='" + game.players[player] + "'>" + game.players[player] + "</li>");
 
       }
+      $('#removePlayer').sortable();
+    }
+
+    function sortPlayerList() {
+      game.players = new Array();
+      $('#removePlayer li').each(function() {
+        game.addPlayer($(this).text());
+      });
+      game.start();
     }
 
     window.onload = function() {
@@ -228,13 +238,16 @@
               game = new DartGame.Cricket();
               break;
           }
-          game.start();
+          $(this).parent('label').siblings('label').removeClass('validate').addClass('cancel')
+          $(this).parent('label').removeClass('cancel').addClass('validate');
+          sortPlayerList();
         });
 
         setPlayersList();
 
-        $('input[name="add-player"]').click(function() {
+        $('a#add-player').click(function() {
           if(game.addPlayer($('input[name="new-player"]').val()) >= 0) {
+            $('input[name="new-player"]').val('').text('');
             setPlayersList();
             game.start();
           }
@@ -248,6 +261,13 @@
           }
           return false;
         });
+
+        $('#players-conf').submit(function() {
+          $('a#add-player').click();
+          return false;
+        })
+
+        $('#removePlayer').sortable().bind('sortupdate', sortPlayerList);
     }
     </script>
   </head>
@@ -259,19 +279,21 @@
             <form name="players-conf" id="players-conf">
               <fieldset name="pconf">
                 <legend>Players</legend>
-                <label>Add player<input type="text" name="new-player"></input></label>
-                <input type="button" name="add-player" value="Add Player"/>
                 <ul id="removePlayer">
                 </ul>
+                <div style="display:table;width:100%">
+                  <span style="display:table-cell"><input style="width:100%" type="text" class="add" name="new-player"></input></span>
+                  <label style="display:table-cell;width:136px" for="new-player"><a id="add-player" href="#" class="validate button">Add player</a></label>
+                </div>
               </fieldset>
             </form>
             <form name="game-conf" id="game-conf">
               <fieldset name="gconf">
                 <legend>Game</legend>
-                <label><input type="radio" name="game-name" value="cricket" checked="yes"/>Cricket</label>
-                <label><input type="radio" name="game-name" value="501"/>501</label>
-                <label><input type="radio" name="game-name" value="401"/>401</label>
-                <label><input type="radio" name="game-name" value="301"/>301</label>
+                <label class="game-option button validate"><input type="radio" name="game-name" value="cricket" checked="yes"/>Cricket</label>
+                <label class="game-option button cancel"><input type="radio" name="game-name" value="501"/>501</label>
+                <label class="game-option button cancel"><input type="radio" name="game-name" value="401"/>401</label>
+                <label class="game-option button cancel"><input type="radio" name="game-name" value="301"/>301</label>
               </fieldset>
             </form>
           </div>

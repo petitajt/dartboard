@@ -35,7 +35,7 @@ div#score {
   cursor: crosshair;
 }
 
-a.button {
+.button {
     border: 0;
     border-right: 8px solid black;
     padding: 9px 10px 4px 20px;
@@ -46,17 +46,65 @@ a.button {
     font-variant: small-caps;
 }
 
-a.validate {
+.validate {
     background-color: #f0ffe1;
     border-color: #5ba622;
     width: 50%;
     float: left;
 }
 
-a.cancel {
+input.add {
+    border: 0;
+    border-right: 1px solid #8a8a8a;
+    background: #e7e7e7;
+    padding: 9px 2px 4px 2px;
+    text-align: left;
+    font-weight: bold;
+    color: #383838;
+    font-variant: small-caps;
+    border-top-left-radius: 5px;
+    border-bottom-left-radius: 5px;
+}
+
+.sortable-placeholder {
+  border: 1px dashed #CCCCCC;
+  width: 99%;
+  height: 1em;
+  margin-top: 2px;
+}
+
+.cancel {
     background-color: #e7e7e7;
     border-color: #8a8a8a;
     float: right;
+}
+
+li.cancel {
+  display: list-item;
+  float: none;
+  margin-top: 2px;
+}
+
+li.cancel:hover {
+  background-color: #ffdbdb;
+  border-color: #ff0000;
+}
+
+a#add-player {
+  float: none;
+  display: inline;
+}
+
+label.game-option {
+  display: list-item;
+  text-align: left;
+  list-style: none;
+  float: none;
+  margin-top: 2px;
+}
+
+label.game-option input {
+  visibility: hidden;
 }
 
 div {
@@ -103,11 +151,12 @@ div {
 
 #header {
   width: 100%;
-  background-color: #111;
 }
 
-#header fieldset {
+#config fieldset {
   border: 1px solid #8a8a8a;
+  margin-top: 5px;
+  padding: 5px;
 }
 
 #players-conf {
@@ -116,14 +165,14 @@ div {
   margin-left: 3%;
 }
 
+#players-conf fieldset {  
+  min-height: 141px;
+}
+
 #game-conf {
   float: right;
   width: 45%;
   margin-right: 3%;
-}
-
-#config fieldset {
-    margin-bottom: 5px;
 }
 
 #config.hidden {
@@ -140,6 +189,11 @@ div {
   border-bottom: 1px solid #8a8a8a;
   margin: 0px auto;
   text-align: center;
+}
+
+#removePlayer {
+  margin-bottom: 8px;
+  width: 100%;
 }
 
 table.X01 {
@@ -192,6 +246,7 @@ table.cricket td, table.cricket th {
     border: 1px solid #8a8a8a;
     text-align: center;
     vertical-align: middle;
+    overflow: hidden;
 }
 
 table.cricket tr.header td.current {
