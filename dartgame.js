@@ -184,7 +184,12 @@ var DartGame = {};
             this.header.cells[this.currentPlayer].className = "current";
         },
     };
-    Kinetic.Global.extend(DartGame.X01, DartGame.Base);
+    if(Kinetic.version == "4.3.2") {
+        Kinetic.Global.extend(DartGame.X01, DartGame.Base);
+    }
+    else {
+        Kinetic.Util.extend(DartGame.X01, DartGame.Base);   
+    }
 
     DartGame.Five01 = function() {
         this._init501();
@@ -194,7 +199,12 @@ var DartGame = {};
             DartGame.X01.call(this, { gameName: 'Five-O-One', maxTurns: '&infin;', maxScore: 501 });
         },
     };
-    Kinetic.Global.extend(DartGame.Five01, DartGame.X01);
+    if(Kinetic.version == "4.3.2") {
+        Kinetic.Global.extend(DartGame.Five01, DartGame.X01);
+    }
+    else {
+        Kinetic.Util.extend(DartGame.Five01, DartGame.X01);   
+    }
 
     DartGame.Four01= function() {
         this._init401();
@@ -204,7 +214,12 @@ var DartGame = {};
             DartGame.X01.call(this, { gameName: 'Four-O-One', maxTurns: '&infin;', maxScore: 401 });
         },
     };
-    Kinetic.Global.extend(DartGame.Four01, DartGame.X01);
+    if(Kinetic.version == "4.3.2") {
+        Kinetic.Global.extend(DartGame.Four01, DartGame.X01);
+    }
+    else {
+        Kinetic.Util.extend(DartGame.Four01, DartGame.X01);   
+    }
 
     DartGame.Three01= function() {
         this._init301();
@@ -214,7 +229,12 @@ var DartGame = {};
             DartGame.X01.call(this, { gameName: 'Three-O-One', maxTurns: '&infin;', maxScore: 301 });
         },
     };
-    Kinetic.Global.extend(DartGame.Three01, DartGame.X01);
+    if(Kinetic.version == "4.3.2") {
+        Kinetic.Global.extend(DartGame.Three01, DartGame.X01);
+    }
+    else {
+        Kinetic.Util.extend(DartGame.Three01, DartGame.X01);   
+    }
 
     DartGame.Cricket = function(config) {
         this._initCricket(config);
@@ -267,18 +287,17 @@ var DartGame = {};
                     if(spot == 'D' || spot == 'T') {
                         for(var val in score[spot]) {
                             if(spot == 'D')
-                                this._addTotal(2, score[spot][val]);
+                                this._addTotal(2, score[spot][val], spot);
                             else
-                                this._addTotal(3, score[spot][val]);
+                                this._addTotal(3, score[spot][val], spot);
                         }
                     }
                     else
-                        this._addTotal(nbHits, spot);
+                        this._addTotal(nbHits, spot, spot);
                 }
-                //i++;
             }
         },
-        _addTotal: function(hits, value) {
+        _addTotal: function(hits, value, spot) {
             this.playerTotals[this.currentPlayer] += hits*value;
             $("tr.totals td.p" + this.currentPlayer).text(this.playerTotals[this.currentPlayer]);
         },
@@ -366,6 +385,111 @@ var DartGame = {};
             this.header.cells[this.currentPlayer + 1].className = "current";
         },
     };
-    Kinetic.Global.extend(DartGame.Cricket, DartGame.Base);
+    if(Kinetic.version == "4.3.2") {
+        Kinetic.Global.extend(DartGame.Cricket, DartGame.Base);
+    }
+    else {
+        Kinetic.Util.extend(DartGame.Cricket, DartGame.Base);   
+    }
 
+    DartGame.getRandomSpots = function(nbSpots) {
+        nbSpots = typeof nbSpots !== 'undefined' ? nbSpots : 9;
+
+        var targets = { '1': '1', '2': '2', '3': '3', '4': '4', '5': '5',
+                '6': '6', '7': '7', '8': '8', '9': '9', '10': '10',
+                '11': '11', '12': '12', '13': '13', '14': '14', '15': '15',
+                '16': '16', '17': '17', '18': '18', '19': '19', '20': '20',
+                'D': 'double', 'T': 'triple', '25': 'center',
+        };
+
+        var s = {};
+
+        var keys = new Array();
+        for(var i in targets) {
+            keys.push(i);
+        }
+
+        nbSpots = nbSpots <= keys.length ? nbSpots : keys.length;
+
+        for (var i = keys.length - 1; i > 0; i--) {
+            var j = Math.floor(Math.random() * (i + 1));
+            var temp = keys[i];
+            keys[i] = keys[j];
+            keys[j] = temp;
+        }
+
+        for(var i = 0; i < nbSpots; i++) {
+            s[keys[i]] = targets[keys[i]];
+        }
+        return s;
+    };
+
+    DartGame.RandomCricket= function() {
+        this._initRandomCricket();
+    };
+    DartGame.RandomCricket.prototype = {
+        _initRandomCricket: function() {
+            DartGame.Cricket.call(this, {
+                gameName: 'Random Cricket', maxTurns: '20', 
+                spots: DartGame.getRandomSpots(9),
+            });
+        },
+    };
+    if(Kinetic.version == "4.3.2") {
+        Kinetic.Global.extend(DartGame.RandomCricket, DartGame.Cricket);
+    }
+    else {
+        Kinetic.Util.extend(DartGame.RandomCricket, DartGame.Cricket);   
+    }
+
+    DartGame.CutThroat= function(config) {
+        this._initCutThroat(config);
+    };
+    DartGame.CutThroat.prototype = {
+        _initCutThroat: function(config) {
+            if(!config)
+                config = {
+                    gameName: 'Cut Throat', maxTurns: '20', 
+                };
+
+            DartGame.Cricket.call(this, config);
+        },
+        _addTotal: function(hits, value, spot) {
+            var add = hits*value;
+            for(var i in this.players) {
+                if(i != this.currentPlayer) {
+                    var selector = "td:empty.v" + this.spots[spot] + ".p" + i;
+                    if($(selector).length > 0) {
+                        this.playerTotals[i] += add;
+                        $("tr.totals td.p" + i).text(this.playerTotals[i]);            
+                    }
+                }
+            }
+            
+        },
+    };
+    if(Kinetic.version == "4.3.2") {
+        Kinetic.Global.extend(DartGame.CutThroat, DartGame.Cricket);
+    }
+    else {
+        Kinetic.Util.extend(DartGame.CutThroat, DartGame.Cricket);   
+    }
+
+    DartGame.RandomCutThroat= function() {
+        this._initRandomCutThroat();
+    };
+    DartGame.RandomCutThroat.prototype = {
+        _initRandomCutThroat: function() {
+            DartGame.CutThroat.call(this, {
+                gameName: 'Random Cut Throat', maxTurns: '20', 
+                spots: DartGame.getRandomSpots(9),
+            });
+        },
+    };
+    if(Kinetic.version == "4.3.2") {
+        Kinetic.Global.extend(DartGame.RandomCutThroat, DartGame.CutThroat);
+    }
+    else {
+        Kinetic.Util.extend(DartGame.RandomCutThroat, DartGame.CutThroat);   
+    }
 })()

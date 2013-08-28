@@ -5,10 +5,22 @@
 
     Kinetic.DartSlice.prototype = {
         _initDartSlice: function(config) {
-            this.setDefaultAttrs({
-                position: 0,
-                state: 0,
-            });
+            if(Kinetic.version == "4.3.2") {
+                this.setDefaultAttrs({
+                    position: 0,
+                    state: 0,
+                });
+            }
+            else {
+                this.eventListeners = {};
+                if(this.attrs === undefined) {
+                    this.attrs = {};
+                }
+                this.setAttrs({
+                    position: 0,
+                    state: 0,
+                });
+            }
 
             Kinetic.Shape.call(this, config);
             this.ShapeType = "DartSlice";
@@ -67,8 +79,17 @@
             canvas.fillStroke(this);
         },
     };
-    Kinetic.Global.extend(Kinetic.DartSlice, Kinetic.Shape);
-    Kinetic.Node.addGettersSetters(Kinetic.DartSlice, ['position', 'state']);
+    if(Kinetic.version == "4.3.2") {
+        Kinetic.Global.extend(Kinetic.DartSlice, Kinetic.Shape);
+        Kinetic.Node.addGettersSetters(Kinetic.DartSlice, ['position', 'state']);
+    }
+    else {
+        Kinetic.Util.extend(Kinetic.DartSlice, Kinetic.Shape);
+        var properties = ['position', 'state'];
+        for(var i in properties)
+            Kinetic.Node.addGetterSetter(Kinetic.DartSlice, properties[i]);  
+    }
+
 
     Kinetic.DartRing = function(config) {
         this._initDartRing(config);
@@ -116,6 +137,11 @@
             }
         },
     };
-    Kinetic.Global.extend(Kinetic.DartRing, Kinetic.DartSlice);
+    if(Kinetic.version == "4.3.2") {
+        Kinetic.Global.extend(Kinetic.DartRing, Kinetic.DartSlice);
+    }
+    else {
+        Kinetic.Util.extend(Kinetic.DartRing, Kinetic.DartSlice);
+    }
 
 })()

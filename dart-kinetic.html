@@ -9,7 +9,7 @@
 
     <script type="text/javascript" language="javascript" src="jquery-2.0.0.js"></script>
     <script type="text/javascript" language="javascript" src="jquery.sortable.js"></script>
-    <script type="text/javascript" language="javascript" src="kinetic-v4.3.2.min.js"></script>
+    <script type="text/javascript" language="javascript" src="kinetic-v4.5.4.js"></script>
     <script type="text/javascript" language="javascript" src="kinetic-arcedtext-extension.js"></script>
     <script type="text/javascript" language="javascript" src="kinetic-darts-extension.js"></script>
     <script type="text/javascript" language="javascript" src="canvas-helper.js"></script>
@@ -22,6 +22,7 @@
     var last = null;
     var lastColor = "";
     var game = null;
+    var layer = null;
 
     function getColor(position, state) {
         var index = position;
@@ -33,6 +34,7 @@
     function hit(position, state) {
       if(game && game.dartNumber <= document.getElementById('scoreList').children.length)
           return false;
+      
       var oh = null;
       if(game && game.onHit)
           oh = game.onHit(values[position], state);
@@ -81,13 +83,14 @@
 
     function drawTarget(containerId, W, H, color1, color2) {
         document.getElementById('container').innerHTML = "";
+        
         var stage = new Kinetic.Stage({
             container: containerId,
             width: W,
             height: H
         });
 
-        var layer = new Kinetic.Layer();
+        layer = new Kinetic.Layer();
         for(var i = 1; i < 21; i++) {
             for(var j = 0; j < 4; j++) {
                 layer.add(new Kinetic.DartSlice({ 
@@ -117,7 +120,7 @@
         }));
 
         layer.on('click', function(evt) {
-            var shape = evt.shape;
+            var shape = evt.targetNode;
             hit(shape.getPosition(), shape.getState());
             if(last != null) {
                 last.setFill(lastColor);
@@ -174,7 +177,16 @@
 
     function reset() {
         document.getElementById('scoreList').innerHTML = "";
-        drawTarget('container', 600, 600, "lightgreen", "lightblue");
+        
+        if(layer != null) {
+          if(last != null) {
+            last.setFill(lastColor);
+            last = null;
+          }
+          layer.draw();
+        }
+        else
+          drawTarget('container', 600, 600, "lightgreen", "lightblue");
     }
 
     function setPlayersList() {
@@ -208,11 +220,11 @@
         game.addPlayer('Jul');
         game.start();
 
-        document.getElementById('confirm').onclick = function() {
+        $('#confirm').click(function() {
             game.score(document.getElementById('scoreList'));
             reset();
             return false;
-        }
+        });
 
         $('#conf-button').click(function() {
           $('#config').toggleClass('hidden');
@@ -232,6 +244,15 @@
               break;
             case '301':
               game = new DartGame.Three01();
+              break;
+            case 'rand':
+              game = new DartGame.RandomCricket();
+              break;
+            case 'cut':
+              game = new DartGame.CutThroat();
+              break;
+            case 'rcut':
+              game = new DartGame.RandomCutThroat();
               break;
             case 'cricket':
             default:
@@ -291,6 +312,9 @@
               <fieldset name="gconf">
                 <legend>Game</legend>
                 <label class="game-option button validate"><input type="radio" name="game-name" value="cricket" checked="yes"/>Cricket</label>
+                <label class="game-option button cancel"><input type="radio" name="game-name" value="rand"/>Random Cricket</label>
+                <label class="game-option button cancel"><input type="radio" name="game-name" value="cut"/>Cut Throat</label>
+                <label class="game-option button cancel"><input type="radio" name="game-name" value="rcut"/>Random Cut Throat</label>
                 <label class="game-option button cancel"><input type="radio" name="game-name" value="501"/>501</label>
                 <label class="game-option button cancel"><input type="radio" name="game-name" value="401"/>401</label>
                 <label class="game-option button cancel"><input type="radio" name="game-name" value="301"/>301</label>

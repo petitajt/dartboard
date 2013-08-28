@@ -5,21 +5,44 @@
 
     Kinetic.ArcedText.prototype = {
         _initArcedText: function(config) {
-            this.setDefaultAttrs({
-                space: 3,
-                radius: 0,
-                start: Math.PI,
-                end: 0,
-                anti: false,
-                stroke: 'transparent',
-                strokeWidth: 0,
-                fontStyle: 'normal',
-                fontSize: '1em',
-                fontFamilt: 'sans',
-                text: '',
-                padLeft: 0,
-                padRight: 0,
-            });
+            if(Kinetic.version == "4.3.2") {
+                this.setDefaultAttrs({
+                    space: 3,
+                    radius: 0,
+                    start: Math.PI,
+                    end: 0,
+                    anti: false,
+                    stroke: 'transparent',
+                    strokeWidth: 0,
+                    fontStyle: 'normal',
+                    fontSize: '1em',
+                    fontFamilt: 'sans',
+                    text: '',
+                    padLeft: 0,
+                    padRight: 0,
+                });
+            }
+            else {
+                this.eventListeners = {};
+                if(this.attrs === undefined) {
+                    this.attrs = {};
+                }
+                this.setAttrs({
+                    space: 3,
+                    radius: 0,
+                    start: Math.PI,
+                    end: 0,
+                    anti: false,
+                    stroke: 'transparent',
+                    strokeWidth: 0,
+                    fontStyle: 'normal',
+                    fontSize: '1em',
+                    fontFamilt: 'sans',
+                    text: '',
+                    padLeft: 0,
+                    padRight: 0,
+                });
+            }
 
             Kinetic.Shape.call(this, config);
             this.ShapeType = "ArcedText";
@@ -39,6 +62,14 @@
             ctx.textArc(this.getText(), this.getX(), this.getY(), this.getRadius(), this.getStart(), this.getEnd(), this.getPadLeft(), this.getPadRight(), this.getAnti());
         },
     };
-    Kinetic.Global.extend(Kinetic.ArcedText, Kinetic.Shape);
-    Kinetic.Node.addGettersSetters(Kinetic.ArcedText, ['radius', 'start', 'end', 'anti', 'space', 'fontStyle', 'fontSize', 'fontFamily', 'text', 'padLeft', 'padRight']);
+    if(Kinetic.version == "4.3.2") {
+        Kinetic.Global.extend(Kinetic.ArcedText, Kinetic.Shape);
+        Kinetic.Node.addGettersSetters(Kinetic.ArcedText, ['radius', 'start', 'end', 'anti', 'space', 'fontStyle', 'fontSize', 'fontFamily', 'text', 'padLeft', 'padRight']);
+    }
+    else {
+        Kinetic.Util.extend(Kinetic.ArcedText, Kinetic.Shape);
+        var properties = ['radius', 'start', 'end', 'anti', 'space', 'fontStyle', 'fontSize', 'fontFamily', 'text', 'padLeft', 'padRight'];
+        for(var i in properties)
+            Kinetic.Node.addGetterSetter(Kinetic.ArcedText, properties[i]);   
+    }
 })()
